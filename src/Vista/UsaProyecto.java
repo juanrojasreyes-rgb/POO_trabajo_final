@@ -5,6 +5,7 @@
 package Vista;
 
 import Modelo.Cliente;
+import Modelo.Empleado;
 import Modelo.Proyecto;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -18,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 /**
  * 
@@ -33,24 +35,11 @@ public class UsaProyecto extends javax.swing.JFrame {
     private static ArrayList<Cliente> losClientes = new ArrayList<>();
 
     
-    /*****************************************************/
-    /*Constructor*/
-
+    /***Constructor***/
     
- /************************************/   
     public UsaProyecto() throws HeadlessException{
-    }
-
-    public UsaProyecto(GraphicsConfiguration gc) {
-        super(gc);
-    }
-
-    public UsaProyecto(String title) throws HeadlessException {
-        super(title);
-    }
-
-
-
+    initComponents();
+}
     /***********************************************************************************/
     /*consultas*/
 //Consultar el gerente de un proyecto dado "codigoProyecto"
@@ -225,6 +214,7 @@ public class UsaProyecto extends javax.swing.JFrame {
         jLabel7.setText("Equipo");
 
         jButtonRegistrar.setText("Registrar");
+        jButtonRegistrar.addActionListener(this::jButtonRegistrarActionPerformed);
 
         javax.swing.GroupLayout bloqueLayout = new javax.swing.GroupLayout(bloque);
         bloque.setLayout(bloqueLayout);
@@ -473,7 +463,7 @@ public class UsaProyecto extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 775, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(bloque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -546,6 +536,11 @@ public class UsaProyecto extends javax.swing.JFrame {
     private void jTextFieldFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldFiltroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldFiltroActionPerformed
+
+    private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
+        
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
     /**
      * @param args the command line arguments
