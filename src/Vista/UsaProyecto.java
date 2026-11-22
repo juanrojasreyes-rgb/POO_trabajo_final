@@ -35,6 +35,7 @@ public class UsaProyecto extends javax.swing.JFrame {
     private static ArrayList<Cliente> losClientes = new ArrayList<>();
 
     
+    
     /***Constructor***/
     
     public UsaProyecto() throws HeadlessException{

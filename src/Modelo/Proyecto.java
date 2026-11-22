@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Modelo;
+import java.io.Serializable;
 import java.util.ArrayList ;
 import java.time.LocalDate;
 
@@ -11,7 +12,8 @@ import java.time.LocalDate;
  *
  * @author Gabriela imbachii
  */
-public class Proyecto {
+public class Proyecto implements Serializable {
+        
     private String codigo ;
     private String titulo ;
     private LocalDate fechaInicio ;
@@ -43,6 +45,7 @@ public class Proyecto {
         this.suCliente = suCliente;
         this.suGerente = suGerente;
         this.Estado = Estado;
+        this.suEquipo = new ArrayList<>();
     }
 
     public String getCodigo() {
@@ -119,18 +122,25 @@ public class Proyecto {
 
     @Override
     public String toString() {
-        return "Proyecto{" + "codigo=" + codigo + ", titulo=" + titulo + ", fechaInicio=" + fechaInicio + ", unidadDuracion=" + unidadDuracion + ", duracionEstimada=" + duracionEstimada + ", suCliente=" + suCliente + ", suGerente=" + suGerente + ", suEquipo=" + suEquipo + ", Estado=" + Estado + '}';
+        return "Proyecto{" 
+                + "codigo=" + codigo 
+                + ", titulo=" + titulo 
+                + ", fechaInicio=" + fechaInicio 
+                + ", unidadDuracion=" + unidadDuracion 
+                + ", duracionEstimada=" + duracionEstimada 
+                + ", suCliente=" + suCliente 
+                + ", suGerente=" + suGerente 
+                + ", suEquipo=" + suEquipo 
+                + ", Estado=" + Estado 
+                + '}';
     }
-
-    
     
     public LocalDate determinarFechaFinalizacion () {
         if (fechaInicio == null || unidadDuracion == null ){ 
-            return null ;
-            
+            return null ;   
         }
-            switch(unidadDuracion.toLowerCase()) {
-                case "semanas" :
+        switch (unidadDuracion.trim().toLowerCase()) {
+            case "semanas" :
                     return fechaInicio.plusWeeks(duracionEstimada) ;
                 case "meses" :
                     return fechaInicio.plusMonths(duracionEstimada) ;
@@ -155,6 +165,7 @@ public class Proyecto {
         if (this.suEquipo == null || numeroIdentificacion == null){
             return null;
         }
+        String idBuscado = numeroIdentificacion.trim();
         for (int i = 0; i < this.suEquipo.size(); i++) {
             Empleado integrante = this.suEquipo.get(i);
             if (integrante.getNumeroIdentificacion().equalsIgnoreCase(numeroIdentificacion.trim())) {
