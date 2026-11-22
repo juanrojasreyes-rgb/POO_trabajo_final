@@ -34,7 +34,16 @@ public class UsaProyecto extends javax.swing.JFrame {
     private static ArrayList<Proyecto> losProyectos = new ArrayList<>();
     private static ArrayList<Cliente> losClientes = new ArrayList<>();
 
+    /* Constantes de apoyo - Revisar y aprender
     
+    private static final String ARCHIVO_PROYECTOS = "datosProyectos";
+    private static final String ARCHIVO_CLIENTES = "datosClientes";
+    private static final String[] ESTADOS = {"INICIADO", "EN CURSO", "CANCELADO", "FINALIZADO", "SUSPENDIDO", "APLAZADO"};
+    private static final String[] UNIDADES = {"semanas", "meses", "años"};
+    private static final Pattern PATRON_TELEFONO = Pattern.compile("[0-9+\\-\\s()]+");
+    private static final Pattern PATRON_CORREO = Pattern.compile("[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+");    
+    
+    */
     
     /***Constructor***/
     
@@ -42,10 +51,154 @@ public class UsaProyecto extends javax.swing.JFrame {
     initComponents();
 }
     /***********************************************************************************/
+    /*registra*/
+    /*registrar un proyecto _ + registrarProyecto(datos : ArrayList<Proyecto>) : ArrayList<Proyecto> */
+    
+    public ArrayList<Proyecto> registrarProyecto(ArrayList<Proyecto> losProyectos){
+        //1. Obtener los datos genéricos del objeto a crear
+        
+        int numeroIde = 0; //entre 6 y 11 dígitos
+        char tipoIde; //C: cédula ciudadanía (por defecto), E: cédula extranjería, T: tarjeta identidad, O: otro
+        String nombres; //mínimo 3 caracteres
+        String apellidos; //mínimo 3 caracteres
+        LocalDate fechaIngreso = null; //formato: aaaa-mm-dd
+
+    
+    /* + registrarIntegranteProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+    public String registrarIntegranteProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
+        // 1. Verificar si la lista de proyectos está llena
+        if (datos == null || datos.isEmpty()) {
+            return "No hay proyectos registrados en el sistema (la lista de proyectos está vacía).";
+        }
+
+        if (codigoProyecto == null || codigoProyecto.trim().isEmpty()) {
+            return "Error: Debe proporcionar un código de proyecto válido.";
+        }
+
+        // 2. Recorrer la lista de proyectos y buscar el proyecto que cumpla la condición
+        Proyecto proyectoEncontrado = buscarProyectoPorCodigo(datos, codigoProyecto.trim());
+        if (proyectoEncontrado == null) {
+            return "No existe un proyecto registrado con el código: " + codigoProyecto;
+        }
+
+        // 3. Solicitar y validar los datos del integrante (Empleado)
+        Empleado nuevoIntegrante = solicitarDatosEmpleadoInteractivo(proyectoEncontrado.getSuEquipo());
+        if (nuevoIntegrante == null) {
+            return "Operación cancelada o datos del integrante inválidos.";
+        }
+
+        // 4. Agregar el integrante al equipo del proyecto y finalizar
+        proyectoEncontrado.agregarIntegrante(nuevoIntegrante);
+        return "Integrante registrado exitosamente en el proyecto [" + proyectoEncontrado.getCodigo() + " - "
+                + proyectoEncontrado.getTitulo() + "]:\n" + nuevoIntegrante.toString();
+    }
+    
+    /* + registrarEquipoProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+    public String registrarEquipoProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
+        // 1. Verificar si la lista está llena
+        if (datos == null || datos.isEmpty()) {
+            return "No hay proyectos registrados en el sistema (la lista de proyectos está vacía).";
+        }
+
+        if (codigoProyecto == null || codigoProyecto.trim().isEmpty()) {
+            return "Error: Debe proporcionar un código de proyecto válido.";
+        }
+
+        // 2. Recorrer la lista de proyectos y buscar el proyecto que cumpla la condición
+        for (Proyecto proyecto : datos) {
+            if (proyecto.getCodigo().equalsIgnoreCase(codigoProyecto.trim())) {
+                // Solicitar la cantidad de integrantes a registrar
+                String cantStr = JOptionPane.showInputDialog(
+                        this,
+                        "Proyecto encontrado: " + proyecto.getTitulo()
+                        + "\nIngrese la cantidad inicial de integrantes a registrar:",
+                        "Registrar Equipo",
+                        JOptionPane.QUESTION_MESSAGE
+                );
+
+                if (cantStr == null || cantStr.trim().isEmpty()) {
+                    return "Registro de equipo cancelado.";
+                }
+
+                int cantidad;
+                try {
+                    cantidad = Integer.parseInt(cantStr.trim());
+                    if (cantidad <= 0) {
+                        return "Error: La cantidad de integrantes debe ser mayor a cero.";
+                    }
+                } catch (NumberFormatException ex) {
+                    return "Error: La cantidad ingresada no es un número entero válido.";
+                }
+
+                // Crear la lista de integrantes (equipo)
+                ArrayList<Empleado> nuevoEquipo = new ArrayList<>();
+
+                // Ciclo para llenar la lista de integrantes (equipo)
+                int contador = 1;
+                boolean continuar = true;
+                while (continuar) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Ingresando datos del integrante #" + contador,
+                            "Registro de Equipo - Proyecto " + proyecto.getCodigo(),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+
+                    Empleado integrante = solicitarDatosEmpleadoInteractivo(nuevoEquipo);
+                    if (integrante != null) {
+                        nuevoEquipo.add(integrante);
+                        contador++;
+                    } else {
+                        int cancelarTodo = JOptionPane.showConfirmDialog(
+                                this,
+                                "No se completó el registro de este integrante. ¿Desea cancelar todo el registro del equipo?",
+                                "Confirmar cancelación",
+                                JOptionPane.YES_NO_OPTION
+                        );
+                        if (cancelarTodo == JOptionPane.YES_OPTION) {
+                            return "Registro del equipo cancelado por el usuario.";
+                        }
+                    }
+
+                    // Evaluar si ya completó la cantidad solicitada y si requiere otro integrante
+                    if (nuevoEquipo.size() >= cantidad) {
+                        int opcionOtro = JOptionPane.showConfirmDialog(
+                                this,
+                                "¿Desea registrar otro integrante adicional en el equipo?",
+                                "Continuar registro de equipo",
+                                JOptionPane.YES_NO_OPTION
+                        );
+                        continuar = (opcionOtro == JOptionPane.YES_OPTION);
+                    }
+                }
+
+                // Actualizar el equipo del proyecto indicado y finalizar el recorrido
+                proyecto.setSuEquipo(nuevoEquipo);
+                return "Equipo registrado exitosamente para el proyecto [" + proyecto.getCodigo() + " - "
+                        + proyecto.getTitulo() + "].\nTotal de integrantes registrados: " + nuevoEquipo.size()
+                        + "\n\n" + consultarEquipoProyectoDadoCodigo(datos, codigoProyecto);
+            }
+        }
+
+        return "No existe un proyecto registrado con el código: " + codigoProyecto;
+    }
+
+    
+    /***********************************************************************************/
     /*consultas*/
-//Consultar el gerente de un proyecto dado "codigoProyecto"
+    
+/*consultarporyectos - + consultarTodosProyectos(datos : ArrayList<Proyecto>) : String */
+    
+/*+ consultarProyectosEnCurso(datos : ArrayList<Proyecto>) : String*/
+/*+ consultarPrimerProyecto(datos : ArrayList<Proyecto>) : String*/
+/*+ consultarUltimoProyecto(datos : ArrayList<Proyecto>) : String*/
+/*+ consultarProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+    
+/*Consultar el gerente "codigoProyecto" _ consultarGerenteProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
     public String consultarGerenteProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
+        /*String codigo = (codigoProyecto == null) ? "" : codigoProyecto.trim();*//*Por que*/
         String resultado = "CONSULTA DEL GERENTE DEL PROYECTO " + codigoProyecto + "\n";
+        /*String resultado = "CONSULTA DEL GERENTE DEL PROYECTO " + codigo + "\n";*/
         if(datos.isEmpty()) {
             resultado += "No hay proyectos registrados.";
             return resultado;
@@ -64,8 +217,8 @@ public class UsaProyecto extends javax.swing.JFrame {
         }
         return resultado;
     }
-/*Consultar dado "numeroIDGerente" */
 
+/*Consultar dado "numeroIDGerente" _ + consultarProyectosDadoNumIDEGerente(datos : ArrayList<Proyecto>, numIDEGerente : String) : String*/
     public String consultarProyectosDadoNumIDEGerente(ArrayList<Proyecto> LosProyectos, String numIDEGerente){
         String resultado = "CONSULTA DE PROYECTOS DADO IDE GERENTE " + numIDEGerente + "\n";
         if(losProyectos.isEmpty()) {
@@ -87,7 +240,7 @@ public class UsaProyecto extends javax.swing.JFrame {
         return resultado;
     }    
     
-/*Consultar dado "numIDECliente"*/
+/*Consultar dado "numIDECliente" _ + consultarProyectosDadoNumIDECliente(datos : ArrayList<Proyecto>, numIDECliente : String) : String*/
     public String consultarProyectosDadoNumIDECliente(ArrayList<Proyecto> LosProyectos, String numIDECliente){
         String resultado = "CONSULTA DE PROYECTOS DADO IDE GERENTE " + numIDECliente + "\n";
         if(losProyectos.isEmpty()) {
@@ -109,9 +262,7 @@ public class UsaProyecto extends javax.swing.JFrame {
         return resultado;
     }    
      
- /*Consultar dado "tipoCliente"*/
- 
-
+ /*Consultar dado "tipoCliente" _ + consultarProyectosDadoTipoCliente(datos : ArrayList<Proyecto>, tipoCliente : String) : String*/
     public String consultarProyectosDadoTipoCliente(ArrayList<Proyecto> losProyectos, String tipoCliente){
         String resultado = "CONSULTAR LOS CLIENTES DADA CATEGORÍA " + tipoCliente + "\n";
         if(losProyectos.isEmpty()){
@@ -146,12 +297,61 @@ public class UsaProyecto extends javax.swing.JFrame {
         }
         return resultado;
     }
-                                              
+                                                  
+/*Consultar Equipos _ + consultarEquipoProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+    public String consultarEquipoProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
+        // 1. Verificar si la lista está llena
+        if (datos == null || datos.isEmpty()) {
+            return "No hay proyectos registrados en el sistema (la lista de proyectos está vacía).";
+        }
 
-   
+        if (codigoProyecto == null || codigoProyecto.trim().isEmpty()) {
+            return "Error: Debe indicar un código de proyecto válido.";
+        }
+
+        // 2. Recorrer la lista de proyectos y buscar el proyecto que cumpla la condición
+        for (Proyecto proyecto : datos) {
+            if (proyecto.getCodigo().equalsIgnoreCase(codigoProyecto.trim())) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("========================================================\n");
+                sb.append("PROYECTO: ").append(proyecto.getCodigo()).append(" - ").append(proyecto.getTitulo()).append("\n");
+                sb.append("========================================================\n");
+
+                ArrayList<Empleado> equipo = proyecto.getSuEquipo();
+                if (equipo == null || equipo.isEmpty()) {
+                    sb.append("El proyecto aún no tiene integrantes registrados en su equipo.\n");
+                } else {
+                    sb.append("INTEGRANTES DEL EQUIPO (").append(equipo.size()).append("):\n");
+                    for (int i = 0; i < equipo.size(); i++) {
+                        sb.append(i + 1).append(". ").append(equipo.get(i).toString()).append("\n");
+                    }
+                }
+                return sb.toString();
+            }
+        }
+
+        return "No se encontró ningún proyecto con el código: " + codigoProyecto;
+    }
+ 
     
-    /***********************************************************************************/
+/***********************************************************************************/
+/*Generar*/    
+
+/*+ generarCodigoProyecto(datos : ArrayList<Proyecto>) : String +*/
+/*+ generarArchivoDeObjetosProyectos(datos : ArrayList<Proyecto>) : void*/
+/*+ generarArchivoDeObjetosClientes(datos : ArrayList<Proyecto>) : void*/    
     
+/***********************************************************************************/
+/*Actualizar*/
+/*+ actualizarEstadoProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+/***********************************************************************************/
+/*Eliminar*/
+/*+ eliminarIntegranteProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/ 
+    
+/***********************************************************************************/
+/*+ leerArchivoDeObjetosProyectos() : ArrayList<Proyecto>*/
+/*+ leerArchivoDeObjetosClientes() : ArrayList<Cliente>*/
+/***********************************************************************************/
     
     /**
      * This method is called from within the constructor to initialize the form.
