@@ -4,6 +4,9 @@
  */
 package Vista;
 
+import Modelo.Empleado;
+import Modelo.Empresa;
+import Modelo.PersonaNatural;
 import Modelo.Proyecto;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
@@ -18,6 +21,224 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
     /*definir y crear el contenedor (colecion ArrayList)*/
     
     ArrayList<Proyecto> losProyectos = new ArrayList<>();
+
+/*consultarporyectos - + consultarTodosProyectos(datos : ArrayList<Proyecto>) : String */
+
+    public String consultarProyectosEnCurso(ArrayList<Proyecto> datos){
+        String resultado = "CONSULTA DE PROYECTOS EN CURSO\n";
+        if(datos.isEmpty()){
+            resultado += "No hay proyectos registrados.";
+            return resultado;
+        }
+        boolean existe = false;
+        for(Proyecto objeto : datos){
+            if(objeto.getEstado().equalsIgnoreCase("EN CURSO")){
+                existe = true;
+                resultado += "\n" + objeto.toString();
+                resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+                resultado += "\n";
+            }
+        }
+        if(!existe){
+            resultado += "No hay proyectos con estado EN CURSO.";
+        }
+        return resultado;
+    }
+        public String consultarPrimerProyecto(ArrayList<Proyecto> datos){
+        String resultado = "CONSULTA DEL PRIMER PROYECTO REGISTRADO\n";
+        if(datos.isEmpty()){
+            resultado += "No hay proyectos registrados.";
+            return resultado;
+        }
+        Proyecto objeto = datos.get(0);
+        resultado += "\n" + objeto.toString();
+        resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+        return resultado;
+    }
+       public String consultarUltimoProyecto(ArrayList<Proyecto> datos){
+        String resultado = "CONSULTA DEL ÚLTIMO PROYECTO REGISTRADO\n";
+        if(datos.isEmpty()){
+            resultado += "No hay proyectos registrados.";
+            return resultado;
+        }
+        Proyecto objeto = datos.get(datos.size() - 1);
+        resultado += "\n" + objeto.toString();
+        resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+        return resultado;
+    }
+    public String consultarProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto){
+        String resultado = "CONSULTA DEL PROYECTO " + codigoProyecto + "\n";
+        if(datos.isEmpty()){
+            resultado += "No hay proyectos registrados.";
+            return resultado;
+        }
+        for(Proyecto objeto : datos){
+            if(objeto.getCodigo().equalsIgnoreCase(codigoProyecto)){
+                resultado += "\n" + objeto.toString();
+                resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+                return resultado;
+            }
+        }
+        resultado += "No hay proyecto con el código indicado.";
+        return resultado;
+    }
+        public String consultarTodosProyectos(ArrayList<Proyecto> datos){
+        String resultado = "CONSULTA DE TODOS LOS PROYECTOS\n";
+        if(datos.isEmpty()){
+            resultado += "No hay proyectos registrados.";
+            return resultado;
+        }
+        for(Proyecto objeto : datos){
+            resultado += "\n" + objeto.toString();
+            resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+            resultado += "\n";
+        }
+        return resultado;
+    }   
+/*+ consultarProyectosEnCurso(datos : ArrayList<Proyecto>) : String*/
+/*+ consultarPrimerProyecto(datos : ArrayList<Proyecto>) : String*/
+/*+ consultarUltimoProyecto(datos : ArrayList<Proyecto>) : String*/
+/*+ consultarProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+    
+/*Consultar el gerente "codigoProyecto" _ consultarGerenteProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+    public String consultarGerenteProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
+        /*String codigo = (codigoProyecto == null) ? "" : codigoProyecto.trim();*//*Por que*/
+        String resultado = "CONSULTA DEL GERENTE DEL PROYECTO " + codigoProyecto + "\n";
+        /*String resultado = "CONSULTA DEL GERENTE DEL PROYECTO " + codigo + "\n";*/
+        if(datos.isEmpty()) {
+            resultado += "No hay proyectos registrados.";
+            return resultado;
+        }
+        boolean proyectoExiste = false;   
+        for(Proyecto objeto : datos){
+            if(objeto.getCodigo().equalsIgnoreCase(codigoProyecto)){
+                proyectoExiste = true;                
+                resultado += ", Proyecto=" + objeto.getTitulo();
+                resultado += ", desempeño=" + objeto.getSuGerente(); 
+                resultado += "\n";
+            }
+        }
+        if(!proyectoExiste) {
+            resultado += "No hay gerente con el código indicado.";
+        }
+        return resultado;
+    }
+ /*Consultar dado "numeroIDGerente" _ + consultarProyectosDadoNumIDEGerente(datos : ArrayList<Proyecto>, numIDEGerente : String) : String*/
+    public String consultarProyectosDadoNumIDEGerente(ArrayList<Proyecto> losProyectos, String numIDEGerente){
+        String resultado = "CONSULTA DE PROYECTOS DADO IDE GERENTE " + numIDEGerente + "\n";
+        if(losProyectos.isEmpty()) {
+            resultado += "No hay gerentes registrados.";
+            return resultado;
+        }    
+        boolean gerenteExiste = false;   
+        for(Proyecto objeto : losProyectos){
+            if(objeto.getSuGerente().getNumeroIdentificacion().equalsIgnoreCase(numIDEGerente)){ 
+                gerenteExiste = true;                
+                resultado += "\n" + objeto.toString();
+                resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+                resultado += "\n";
+            }
+        }
+        if(!gerenteExiste) {
+            resultado += "No hay gerentes con el IDE indicado.";
+        }
+        return resultado;
+    }    
+    
+/*Consultar dado "numIDECliente" _ + consultarProyectosDadoNumIDECliente(datos : ArrayList<Proyecto>, numIDECliente : String) : String*/
+    public String consultarProyectosDadoNumIDECliente(ArrayList<Proyecto> losProyectos, String numIDECliente){
+        String resultado = "CONSULTA DE PROYECTOS DADO IDE Cliente " + numIDECliente + "\n";
+        if(losProyectos.isEmpty()) {
+            resultado += "No hay clientes registrados.";
+            return resultado;
+        }    
+        boolean clienteExiste = false;   
+        for(Proyecto objeto : losProyectos){
+            if(objeto.getSuCliente().getNumeroIdentificacion().equalsIgnoreCase(numIDECliente)){ 
+                clienteExiste = true;                
+                resultado += "\n" + objeto.toString();
+                resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+                resultado += "\n";
+            }
+        }
+        if(!clienteExiste) {
+            resultado += "No hay Clientes con el IDE indicado.";
+        }
+        return resultado;
+    }    
+     
+ /*Consultar dado "tipoCliente" _ + consultarProyectosDadoTipoCliente(datos : ArrayList<Proyecto>, tipoCliente : String) : String*/
+    public String consultarProyectosDadoTipoCliente(ArrayList<Proyecto> losProyectos, String tipoCliente){
+        String resultado = "CONSULTAR LOS CLIENTES DADA CATEGORÍA " + tipoCliente + "\n";
+        if(losProyectos.isEmpty()){
+            resultado += "\n lista de proyectos vacía.";
+            return resultado;
+        }
+        boolean existe = false;
+        for(Proyecto objeto : losProyectos){
+            switch(tipoCliente){
+                case "EMPRESA":
+                    if(objeto.getSuCliente() instanceof Empresa){
+                        existe = true;
+                        resultado += "\n" + objeto.toString();
+                        resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+                        resultado += "\n";                    
+                    }                    
+                    break;
+                case "PERSONANATURAL":
+                    if(objeto.getSuCliente() instanceof PersonaNatural){
+                        existe = true;
+                        resultado += "\n" + objeto.toString();
+                        resultado += "\n  fecha de finalización= " + objeto.determinarFechaFinalizacion();
+                        resultado += "\n";                     
+                    }                     
+                    break;
+                default:
+                    return resultado + "\nTipo de cliente inválido. Use Empresa o PersonaNatural.";
+            }
+        }
+        if(!existe){
+            resultado += "\nNo hay proyectos con el tipo de cliente indicado.";
+            
+        }
+        return resultado;
+    }
+                                                  
+/*Consultar Equipos _ + consultarEquipoProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
+    public String consultarEquipoProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
+        // 1. Verificar si la lista está llena
+        if (datos == null || datos.isEmpty()) {
+            return "No hay proyectos registrados en el sistema (la lista de proyectos está vacía).";
+        }
+
+        if (codigoProyecto == null || codigoProyecto.trim().isEmpty()) {
+            return "Error: Debe indicar un código de proyecto válido.";
+        }
+
+        // 2. Recorrer la lista de proyectos y buscar el proyecto que cumpla la condición
+        for (Proyecto proyecto : datos) {
+            if (proyecto.getCodigo().equalsIgnoreCase(codigoProyecto.trim())) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("========================================================\n");
+                sb.append("PROYECTO: ").append(proyecto.getCodigo()).append(" - ").append(proyecto.getTitulo()).append("\n");
+                sb.append("========================================================\n");
+
+                ArrayList<Empleado> equipo = proyecto.getSuEquipo();
+                if (equipo == null || equipo.isEmpty()) {
+                    sb.append("El proyecto aún no tiene integrantes registrados en su equipo.\n");
+                } else {
+                    sb.append("INTEGRANTES DEL EQUIPO (").append(equipo.size()).append("):\n");
+                    for (int i = 0; i < equipo.size(); i++) {
+                        sb.append(i + 1).append(". ").append(equipo.get(i).toString()).append("\n");
+                    }
+                }
+                return sb.toString();
+            }
+        }
+
+        return "No se encontró ningún proyecto con el código: " + codigoProyecto;
+    }   
+    
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UsaProyecto_Menu.class.getName());
     /***********************************************************************************/
@@ -44,6 +265,44 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
 }
 /*+ leerArchivoDeObjetosClientes() : ArrayList<Cliente>*/
 
+    /*Eliminar*/
+/*+ eliminarIntegranteProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/ 
+        private String pedirDato(String mensaje){
+        String dato = JOptionPane.showInputDialog(this, mensaje);
+        if(dato == null || dato.isBlank()){
+            return null;
+        }
+        return dato.trim();
+    }
+    public String eliminarIntegranteProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto){
+        String resultado = "ELIMINAR INTEGRANTE DEL PROYECTO " + codigoProyecto + "\n";
+        if(datos.isEmpty()){
+            resultado += "No hay proyectos registrados.";
+            return resultado;
+        }
+        for(Proyecto objeto : datos){
+            if(objeto.getCodigo().equalsIgnoreCase(codigoProyecto)){
+                if(objeto.getSuEquipo() == null || objeto.getSuEquipo().isEmpty()){
+                    resultado += "El proyecto no tiene integrantes en su equipo.";
+                    return resultado;
+                }
+                String id = pedirDato("Número de identificación del integrante a eliminar:");
+                if(id == null){
+                    resultado += "Operación cancelada, identificación vacía.";
+                    return resultado;
+                }
+                Empleado eliminado = objeto.eliminarIntegrante(id);
+                if(eliminado == null){
+                    resultado += "El empleado " + id + " no pertenece al equipo del proyecto.";
+                } else{
+                    resultado += "Integrante eliminado:\n" + eliminado;
+                }
+                return resultado;
+            }
+        }
+        resultado += "No hay proyecto con el código indicado.";
+        return resultado;
+    }
     /**
      * Creates new form UsaProyecto_Menu
      */
@@ -78,6 +337,11 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
         jButton13 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextAreaResultados = new javax.swing.JTextArea();
+        jLabel3 = new javax.swing.JLabel();
+        jTextFieldFiltro = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -152,6 +416,14 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
         jButton15.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton15.addActionListener(this::jButtonLeeUnArchivoDeObjetosDeTodosLosClientes);
 
+        jLabel2.setText("Consultas");
+
+        jTextAreaResultados.setColumns(20);
+        jTextAreaResultados.setRows(5);
+        jScrollPane1.setViewportView(jTextAreaResultados);
+
+        jLabel3.setText("Filtro");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -182,7 +454,14 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
                             .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -223,6 +502,13 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
                     .addComponent(jButton7)
                     .addComponent(jButton15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jTextFieldFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalir)
                 .addContainerGap())
         );
@@ -245,35 +531,60 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRegistrarUnProyecto
 
     private void jButtonConsultarTodosLosProyectos(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarTodosLosProyectos
-        // TODO add your handling code here:
+        jTextAreaResultados.setText(consultarTodosProyectos(losProyectos));        // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarTodosLosProyectos
 
     private void jButtonConsultarLosProyectosEnCurso(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarLosProyectosEnCurso
-        // TODO add your handling code here:
+        jTextAreaResultados.setText(consultarProyectosEnCurso(losProyectos));        // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarLosProyectosEnCurso
 
     private void jButtonConsultarElPrimerProyectoRegistrado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElPrimerProyectoRegistrado
-        // TODO add your handling code here:
+        jTextAreaResultados.setText(consultarPrimerProyecto(losProyectos));        // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarElPrimerProyectoRegistrado
 
     private void jButtonConsultarElUltimoProyectoRegistrado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElUltimoProyectoRegistrado
-        // TODO add your handling code here:
+        jTextAreaResultados.setText(consultarUltimoProyecto(losProyectos));        // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarElUltimoProyectoRegistrado
 
     private void jButtonConsultarElGerenteDeUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElGerenteDeUnProyecto
-        // TODO add your handling code here:
+     String filtroCodigo = jTextFieldFiltro.getText().trim();
+
+    if(filtroCodigo.isEmpty()){
+        JOptionPane.showMessageDialog(this, "Operación inválida, filtro vacío.",
+                "ENTRADA INVÁLIDA", JOptionPane.ERROR_MESSAGE);
+    } else{
+        jTextAreaResultados.setText(consultarGerenteProyectoDadoCodigo(losProyectos, filtroCodigo));
+    }   // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarElGerenteDeUnProyecto
 
     private void jButtonConsultarElEquipoDeUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElEquipoDeUnProyecto
+    String filtroCodigo = jTextFieldFiltro.getText().trim();
+
+    if(filtroCodigo.isEmpty()){
+        JOptionPane.showMessageDialog(this, "Operación inválida, filtro vacío.",
+                "ENTRADA INVÁLIDA", JOptionPane.ERROR_MESSAGE);
+    } else{
+        jTextAreaResultados.setText(consultarEquipoProyectoDadoCodigo(losProyectos, filtroCodigo));
+    }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarElEquipoDeUnProyecto
 
     private void jButtonConsultarLosProyectosDeUnGerente(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarLosProyectosDeUnGerente
-        // TODO add your handling code here:
+        if(jTextFieldFiltro.getText().isBlank() || jTextFieldFiltro.getText().isBlank()){
+            JOptionPane.showMessageDialog(null,"Operación inválida, filtro vacío.", "ENTRADA INVÁLIDA", JOptionPane.ERROR_MESSAGE);
+        } else{
+                jTextAreaResultados.setText(consultarProyectosDadoNumIDEGerente(losProyectos, jTextFieldFiltro.getText()));
+                jTextFieldFiltro.setText("");
+        }        // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarLosProyectosDeUnGerente
 
     private void jButtonConsultarLosProyectosDeUnCliente(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarLosProyectosDeUnCliente
-        // TODO add your handling code here:
+        if(jTextFieldFiltro.getText().isBlank() || jTextFieldFiltro.getText().isBlank()){
+            JOptionPane.showMessageDialog(null,"Operación inválida, filtro vacío.", "ENTRADA INVÁLIDA", JOptionPane.ERROR_MESSAGE);
+        } else{
+                jTextAreaResultados.setText(consultarProyectosDadoNumIDECliente(losProyectos, jTextFieldFiltro.getText()));
+                jTextFieldFiltro.setText("");
+        }        // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarLosProyectosDeUnCliente
 
     private void jButtonRegistraUnIntegranteaAUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistraUnIntegranteaAUnProyecto
@@ -349,5 +660,10 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jButtonSalir;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextAreaResultados;
+    private javax.swing.JTextField jTextFieldFiltro;
     // End of variables declaration//GEN-END:variables
 }
