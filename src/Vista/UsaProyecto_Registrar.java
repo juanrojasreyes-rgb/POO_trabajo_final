@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Juan D
  */
-public class UsaProyecto extends javax.swing.JFrame {
+public class UsaProyecto_Registrar extends javax.swing.JFrame {
     
     /*
      * Definir y crear el contenedor (colección ArrayList)
@@ -35,20 +35,10 @@ public class UsaProyecto extends javax.swing.JFrame {
     ArrayList<Proyecto> losProyectos = new ArrayList<>();
     ArrayList<Cliente> losClientes = new ArrayList<>();
 
-    /* Constantes de apoyo - Revisar y aprender
-    
-    private static final String ARCHIVO_PROYECTOS = "datosProyectos";
-    private static final String ARCHIVO_CLIENTES = "datosClientes";
-    private static final String[] ESTADOS = {"INICIADO", "EN CURSO", "CANCELADO", "FINALIZADO", "SUSPENDIDO", "APLAZADO"};
-    private static final String[] UNIDADES = {"semanas", "meses", "años"};
-    private static final Pattern PATRON_TELEFONO = Pattern.compile("[0-9+\\-\\s()]+");
-    private static final Pattern PATRON_CORREO = Pattern.compile("[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+");    
-    
-    */
     
     /***Constructor***/
     
-    public UsaProyecto() throws HeadlessException{
+    public UsaProyecto_Registrar() throws HeadlessException{
     initComponents();
 }
     /***********************************************************************************/
@@ -68,36 +58,6 @@ public class UsaProyecto extends javax.swing.JFrame {
         boolean entradaInvalida = false;
         String msgEntradaInvalida = "¡Operación fallida!.\nEntrada inválida.";
         return null;
-    }
-        
-        
-    /* + registrarIntegranteProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
-    public String registrarIntegranteProyectoDadoCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
-        // 1. Verificar si la lista de proyectos está llena
-        if (datos == null || datos.isEmpty()) {
-            return "No hay proyectos registrados en el sistema (la lista de proyectos está vacía).";
-        }
-
-        if (codigoProyecto == null || codigoProyecto.trim().isEmpty()) {
-            return "Error: Debe proporcionar un código de proyecto válido.";
-        }
-
-        // 2. Recorrer la lista de proyectos y buscar el proyecto que cumpla la condición
-        Proyecto proyectoEncontrado = buscarProyectoPorCodigo(datos, codigoProyecto.trim());
-        if (proyectoEncontrado == null) {
-            return "No existe un proyecto registrado con el código: " + codigoProyecto;
-        }
-
-        // 3. Solicitar y validar los datos del integrante (Empleado)
-        Empleado nuevoIntegrante = solicitarDatosEmpleadoInteractivo(proyectoEncontrado.getSuEquipo());
-        if (nuevoIntegrante == null) {
-            return "Operación cancelada o datos del integrante inválidos.";
-        }
-
-        // 4. Agregar el integrante al equipo del proyecto y finalizar
-        proyectoEncontrado.agregarIntegrante(nuevoIntegrante);
-        return "Integrante registrado exitosamente en el proyecto [" + proyectoEncontrado.getCodigo() + " - "
-                + proyectoEncontrado.getTitulo() + "]:\n" + nuevoIntegrante.toString();
     }
     
     /* + registrarEquipoProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
@@ -189,16 +149,7 @@ public class UsaProyecto extends javax.swing.JFrame {
 
         return "No existe un proyecto registrado con el código: " + codigoProyecto;
     }
-// ==================== MÉTODOS AUXILIARES Y DE VALIDACIÓN (PUNTO 3) ====================
 
-    private Proyecto buscarProyectoPorCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
-        for (Proyecto p : datos) {
-            if (p.getCodigo().equalsIgnoreCase(codigoProyecto)) {
-                return p;
-            }
-        }
-        return null;
-    }
     /**
      * Verifica si ya existe un integrante con el mismo número de identificación dentro de un equipo.
      */
@@ -876,13 +827,14 @@ public class UsaProyecto extends javax.swing.JFrame {
                 }
             }
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-    java.util.logging.Logger.getLogger(UsaProyecto.class.getName())
+    java.util.logging.Logger.getLogger(UsaProyecto_Registrar.class.getName())
             .log(java.util.logging.Level.SEVERE, null, ex);
 }
         //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new UsaProyecto().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new UsaProyecto_Registrar().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
