@@ -237,7 +237,7 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonSalirActionPerformed
 
     private void jButtonRegistrarUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarUnProyecto
-       UsaProyecto_Registrar frameRegistrar = new UsaProyecto_Registrar();
+       UsaProyecto_Registrar_PY frameRegistrar = new UsaProyecto_Registrar_PY();
        frameRegistrar.losProyectos = this.losProyectos;
        frameRegistrar.setVisible(true);
 
