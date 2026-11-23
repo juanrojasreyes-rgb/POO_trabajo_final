@@ -4,6 +4,10 @@
  */
 package Vista;
 
+import Modelo.Proyecto;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,8 +17,32 @@ import javax.swing.JOptionPane;
 public class UsaProyecto_Menu extends javax.swing.JFrame {
     /*definir y crear el contenedor (colecion ArrayList)*/
     
+    ArrayList<Proyecto> losProyectos = new ArrayList<>();
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UsaProyecto_Menu.class.getName());
+    /***********************************************************************************/
+/*+ leerArchivoDeObjetosProyectos() : ArrayList<Proyecto>*/
+    public void leerArchivoObjetos (ArrayList<Proyecto> listaPrincipal){
+        String nombreArchivo = "datosProyectos.obj";
+        ObjectInputStream entrada = null;
+        ArrayList<Proyecto> listaNueva = new ArrayList<>();
+    if(!listaPrincipal.isEmpty()) {listaPrincipal = new ArrayList<>();}
+    try{
+        entrada = new ObjectInputStream(new FileInputStream(nombreArchivo));
+        listaNueva = (ArrayList<Proyecto>) entrada.readObject();
+        listaPrincipal.addAll (listaNueva);
+    } catch(Exception ex){
+        JOptionPane.showMessageDialog(null,"Operacion fallida: error recuperado datos desde archivo","lectura de archivo", JOptionPane.ERROR_MESSAGE);
+    }finally{
+        try{
+            entrada.close();
+            JOptionPane.showMessageDialog(null, "Operacion exitosa, archivo leido correctamente.", "LECTURA DE ARCHIVO", JOptionPane.INFORMATION_MESSAGE);    
+        } catch(Exception ex){
+            JOptionPane.showMessageDialog(null, "Operacion fallida: error cerrando archivo.","LECTURA DE ARCHIVO2", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+/*+ leerArchivoDeObjetosClientes() : ArrayList<Cliente>*/
 
     /**
      * Creates new form UsaProyecto_Menu
@@ -67,34 +95,34 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
 
         jButton4.setText("4. Consultar el primer proyecto registrado");
         jButton4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton4.addActionListener(this::jButton4ActionPerformed);
+        jButton4.addActionListener(this::jButtonConsultarElPrimerProyectoRegistrado);
 
         jButton5.setText("5. Consultar el último proyecto registrado");
         jButton5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton5.addActionListener(this::jButton5ActionPerformed);
+        jButton5.addActionListener(this::jButtonConsultarElUltimoProyectoRegistrado);
 
         jButtonSalir.setText("Salir");
         jButtonSalir.addActionListener(this::jButtonSalirActionPerformed);
 
         jButton1.setText("6. Consultar el gerente de un proyecto");
         jButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        jButton1.addActionListener(this::jButtonConsultarElGerenteDeUnProyecto);
 
         jButton6.setText("7. Consultar el equipo de un proyecto");
         jButton6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton6.addActionListener(this::jButton6ActionPerformed);
+        jButton6.addActionListener(this::jButtonConsultarElEquipoDeUnProyecto);
 
         jButton7.setText("8. Consultar los proyectos de un gerente");
         jButton7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton7.addActionListener(this::jButton7ActionPerformed);
+        jButton7.addActionListener(this::jButtonConsultarLosProyectosDeUnGerente);
 
         jButton8.setText(" 9. Consultar los proyectos de un cliente");
         jButton8.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton8.addActionListener(this::jButton8ActionPerformed);
+        jButton8.addActionListener(this::jButtonConsultarLosProyectosDeUnCliente);
 
         jButton9.setText("10. Registra un integrante a un proyecto");
         jButton9.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton9.addActionListener(this::jButton9ActionPerformed);
+        jButton9.addActionListener(this::jButtonRegistraUnIntegranteaAUnProyecto);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -102,27 +130,27 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
 
         jButton10.setText("11. Registra el equipo a un proyecto");
         jButton10.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton10.addActionListener(this::jButton10ActionPerformed);
+        jButton10.addActionListener(this::jButtonRegistraElEquipoAUnProyecto);
 
         jButton11.setText("12. Elimina un integrante de un proyecto");
         jButton11.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton11.addActionListener(this::jButton11ActionPerformed);
+        jButton11.addActionListener(this::jButtonEliminaUnIntegranteDeUnProyecto);
 
         jButton12.setText("13. Genera un archivo de objetos de todos los proyectos");
         jButton12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton12.addActionListener(this::jButton12ActionPerformed);
+        jButton12.addActionListener(this::jButtonGeneraUnArchivoDeObjetosDeTodosLosProyectos);
 
         jButton13.setText("14. Genera un archivo de objetos de todos los clientes");
         jButton13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton13.addActionListener(this::jButton13ActionPerformed);
+        jButton13.addActionListener(this::jButtonGeneraUnArchivoDeObjetosDeTodosLosClientes);
 
         jButton14.setText("15. Lee un archivo de objetos de todos los proyectos");
         jButton14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton14.addActionListener(this::jButton14ActionPerformed);
+        jButton14.addActionListener(this::jButtonLeeUnArchivoDeObjetosDeTodosLosProyectos);
 
         jButton15.setText("16. Lee un archivo de objetos de todos los clientes");
         jButton15.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton15.addActionListener(this::jButton15ActionPerformed);
+        jButton15.addActionListener(this::jButtonLeeUnArchivoDeObjetosDeTodosLosClientes);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -209,7 +237,11 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonSalirActionPerformed
 
     private void jButtonRegistrarUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarUnProyecto
-        // TODO add your handling code here:
+       UsaProyecto frameRegistrar = new UsaProyecto();
+       frameRegistrar.losProyectos = this.losProyectos;
+       frameRegistrar.setVisible(true);
+
+// TODO add your handling code here:
     }//GEN-LAST:event_jButtonRegistrarUnProyecto
 
     private void jButtonConsultarTodosLosProyectos(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarTodosLosProyectos
@@ -220,57 +252,58 @@ public class UsaProyecto_Menu extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConsultarLosProyectosEnCurso
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void jButtonConsultarElPrimerProyectoRegistrado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElPrimerProyectoRegistrado
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_jButtonConsultarElPrimerProyectoRegistrado
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void jButtonConsultarElUltimoProyectoRegistrado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElUltimoProyectoRegistrado
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_jButtonConsultarElUltimoProyectoRegistrado
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonConsultarElGerenteDeUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElGerenteDeUnProyecto
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonConsultarElGerenteDeUnProyecto
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void jButtonConsultarElEquipoDeUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarElEquipoDeUnProyecto
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_jButtonConsultarElEquipoDeUnProyecto
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void jButtonConsultarLosProyectosDeUnGerente(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarLosProyectosDeUnGerente
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_jButtonConsultarLosProyectosDeUnGerente
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void jButtonConsultarLosProyectosDeUnCliente(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarLosProyectosDeUnCliente
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton8ActionPerformed
+    }//GEN-LAST:event_jButtonConsultarLosProyectosDeUnCliente
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+    private void jButtonRegistraUnIntegranteaAUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistraUnIntegranteaAUnProyecto
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton9ActionPerformed
+    }//GEN-LAST:event_jButtonRegistraUnIntegranteaAUnProyecto
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+    private void jButtonRegistraElEquipoAUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistraElEquipoAUnProyecto
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton10ActionPerformed
+    }//GEN-LAST:event_jButtonRegistraElEquipoAUnProyecto
 
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+    private void jButtonEliminaUnIntegranteDeUnProyecto(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminaUnIntegranteDeUnProyecto
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton11ActionPerformed
+    }//GEN-LAST:event_jButtonEliminaUnIntegranteDeUnProyecto
 
-    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+    private void jButtonGeneraUnArchivoDeObjetosDeTodosLosProyectos(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGeneraUnArchivoDeObjetosDeTodosLosProyectos
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton12ActionPerformed
+    }//GEN-LAST:event_jButtonGeneraUnArchivoDeObjetosDeTodosLosProyectos
 
-    private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
+    private void jButtonGeneraUnArchivoDeObjetosDeTodosLosClientes(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGeneraUnArchivoDeObjetosDeTodosLosClientes
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton13ActionPerformed
+    }//GEN-LAST:event_jButtonGeneraUnArchivoDeObjetosDeTodosLosClientes
 
-    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton14ActionPerformed
+    private void jButtonLeeUnArchivoDeObjetosDeTodosLosProyectos(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLeeUnArchivoDeObjetosDeTodosLosProyectos
+        JOptionPane.showMessageDialog(null,"Leyendo archivo....");
+        leerArchivoObjetos(losProyectos);// TODO add your handling code here:
+    }//GEN-LAST:event_jButtonLeeUnArchivoDeObjetosDeTodosLosProyectos
 
-    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
+    private void jButtonLeeUnArchivoDeObjetosDeTodosLosClientes(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLeeUnArchivoDeObjetosDeTodosLosClientes
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton15ActionPerformed
+    }//GEN-LAST:event_jButtonLeeUnArchivoDeObjetosDeTodosLosClientes
 
     /**
      * @param args the command line arguments

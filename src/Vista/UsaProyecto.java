@@ -13,6 +13,7 @@ import Modelo.Empresa;
 import Modelo.PersonaNatural;
 import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
+import java.time.LocalDate;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,8 +32,8 @@ public class UsaProyecto extends javax.swing.JFrame {
     /*
      * Definir y crear el contenedor (colección ArrayList)
      */
-    private static ArrayList<Proyecto> losProyectos = new ArrayList<>();
-    private static ArrayList<Cliente> losClientes = new ArrayList<>();
+    ArrayList<Proyecto> losProyectos = new ArrayList<>();
+    ArrayList<Cliente> losClientes = new ArrayList<>();
 
     /* Constantes de apoyo - Revisar y aprender
     
@@ -66,6 +67,8 @@ public class UsaProyecto extends javax.swing.JFrame {
 
         boolean entradaInvalida = false;
         String msgEntradaInvalida = "¡Operación fallida!.\nEntrada inválida.";
+        return null;
+    }
         
         
     /* + registrarIntegranteProyectoDadoCodigo(datos : ArrayList<Proyecto>, codigoProyecto : String) : String*/
@@ -186,7 +189,83 @@ public class UsaProyecto extends javax.swing.JFrame {
 
         return "No existe un proyecto registrado con el código: " + codigoProyecto;
     }
+// ==================== MÉTODOS AUXILIARES Y DE VALIDACIÓN (PUNTO 3) ====================
 
+    private Proyecto buscarProyectoPorCodigo(ArrayList<Proyecto> datos, String codigoProyecto) {
+        for (Proyecto p : datos) {
+            if (p.getCodigo().equalsIgnoreCase(codigoProyecto)) {
+                return p;
+            }
+        }
+        return null;
+    }
+    /**
+     * Verifica si ya existe un integrante con el mismo número de identificación dentro de un equipo.
+     */
+    public boolean existeIntegranteEnEquipo(ArrayList<Empleado> equipo, String numeroIdentificacion) {
+        if (equipo == null || numeroIdentificacion == null) {
+            return false;
+        }
+        for (Empleado emp : equipo) {
+            if (emp.getNumeroIdentificacion().equalsIgnoreCase(numeroIdentificacion.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Solicita por cuadros de diálogo los datos de un Empleado validando:
+     * - Identificación no vacía y no repetida en el equipo
+     * - Nombre completo no vacío
+     * - Título profesional no vacío
+     * - Años de experiencia numéricos válidos (byte >= 0)
+     */
+    private Empleado solicitarDatosEmpleadoInteractivo(ArrayList<Empleado> equipoActual) {
+        String id = JOptionPane.showInputDialog(this, "Número de identificación del empleado:");
+        if (id == null || id.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Validación: El número de identificación es obligatorio.");
+            return null;
+        }
+        id = id.trim();
+
+        if (existeIntegranteEnEquipo(equipoActual, id)) {
+            JOptionPane.showMessageDialog(this, "Validación: Ya existe un integrante con la identificación '" + id + "' en este equipo.");
+            return null;
+        }
+
+        String nombre = JOptionPane.showInputDialog(this, "Nombre completo del empleado:");
+        if (nombre == null || nombre.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Validación: El nombre completo es obligatorio.");
+            return null;
+        }
+
+        String titulo = JOptionPane.showInputDialog(this, "Título profesional del empleado:");
+        if (titulo == null || titulo.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Validación: El título profesional es obligatorio.");
+            return null;
+        }
+
+        String expStr = JOptionPane.showInputDialog(this, "Años de experiencia (0 a 60):");
+        if (expStr == null || expStr.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Validación: Debe ingresar los años de experiencia.");
+            return null;
+        }
+
+        byte aniosExp;
+        try {
+            aniosExp = Byte.parseByte(expStr.trim());
+            if (aniosExp < 0) {
+                JOptionPane.showMessageDialog(this, "Validación: Los años de experiencia no pueden ser negativos.");
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Validación: Los años de experiencia deben ser un número entero válido (tipo byte).");
+            return null;
+        }
+
+        return new Empleado(id, nombre.trim(), titulo.trim(), aniosExp);
+    }
     
     /***********************************************************************************/
     /*consultas*/
